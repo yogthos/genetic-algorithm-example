@@ -51,7 +51,7 @@
                         [(:value @(first m2)) (:value @(first m1))])
                val (concat (take (/ (count (first values)) 2) (first values)) 
                      (drop (/ (count (second values)) 2) (second values)))]
-           (recur (conj! new-members (atom (struct member -1 val)))
+           (recur (conj! new-members (atom (struct member nil val)))
                   (rest m1) (rest m2)))))))
                     
 (defn- evolve-step 
@@ -61,11 +61,11 @@
   [population mutator threshold target]                 
   (mutate population mutator threshold)
   (let [promote-size (/ (count population) 5)
-        keep-size    (- (/ (count population) 2) promote-size)]
-    (let [parts (split-at keep-size population)]      
+        keep-size    (- (/ (count population) 2) promote-size)
+        parts (split-at keep-size population)]      
       (concat (first parts)
               (take promote-size (second parts))
-              (mate population)))))
+              (mate population))))
 
 (defn- gen-member [mutator target]
     (struct member nil (for [i (range 0 (count target))] (mutator))))
