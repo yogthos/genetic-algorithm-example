@@ -68,7 +68,7 @@
               (mate population)))))
 
 (defn- gen-member [mutator target]
-    (struct member nil (for [j (range 0 (count target))] (mutator))))
+    (struct member nil (for [i (range 0 (count target))] (mutator))))
   
 (defn- init-population 
   "creates a population using the generator function"
@@ -79,8 +79,8 @@
    "generates the initial population and ranks it, then runs the evolve-step until 
     the solution is found"
    [size threshold target mutator comp]   
-  (loop [population (init-population size mutator target) generations 1]
+  (loop [population (init-population size mutator target)]
     (let [ranked (rank population comp target)]
       (if (fit? ranked)
         ranked
-        (recur (evolve-step ranked mutator threshold target) (inc generations))))))
+        (recur (evolve-step ranked mutator threshold target))))))
