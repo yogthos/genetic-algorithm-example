@@ -56,9 +56,9 @@
                   (rest m1) (rest m2)))))))
                     
 (defn- evolve-step 
-  "takes the top members of the population, then appens some of the bottom 
-   members to promote genetic diversity, adds some offspring, and mutates 
-   the resulting population"
+  "mutates the populationtakes then combines the top members 
+   of the population with some of the bottom members to promote 
+   genetic diversity, and adds some offspring"
   [population mutator threshold target]                 
   (mutate population mutator threshold)
   (let [promote-size (/ (count population) 5)
