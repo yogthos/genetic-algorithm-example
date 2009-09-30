@@ -46,7 +46,6 @@
     (loop [new-members (transient []) m1 (first halves) m2 (second halves)]   
        (if (or (empty? m1) (empty? m2))
          (persistent! new-members)
-         ;else
          (let [values (if (> (rand) 0.5) 
                         [(:value @(first m1)) (:value @(first m2))]
                         [(:value @(first m2)) (:value @(first m1))])
