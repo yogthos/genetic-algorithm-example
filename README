@@ -1,0 +1,2 @@
+This is an example of a GA using Clojure, to build with Maven make sure that you have the latest 
+Clojure library to be installed in your maven repository and then run: mvn install
