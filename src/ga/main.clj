@@ -1,5 +1,6 @@
 (ns ga.main (:gen-class ))
 
+(defstruct mutator-struct :func :args)
 (defstruct member :fitness :value)
 
 ;helper functions
@@ -22,7 +23,7 @@
   [population mutator threshold]  
   (doseq [member population]                    
       (let [old-val (:value @member)
-            new-val (map #(if (< (rand) threshold) (mutator) %1) old-val)]
+            new-val (map #(if (< (rand) threshold) ((:func mutator) (:args mutator)) %1) old-val)]
       (swap! member #(assoc %1 :value new-val)))))
 
 (defn- rank 
@@ -68,7 +69,7 @@
               (mate population))))
 
 (defn- gen-member [mutator target]
-    (struct member nil (for [i (range 0 (count target))] (mutator))))
+    (struct member nil (for [i (range 0 (count target))] ((:func mutator) (:args mutator)))))
   
 (defn- init-population 
   "creates a population using the generator function"
