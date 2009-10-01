@@ -35,7 +35,7 @@
 (defn- fit? 
   "checks if population has any members which match the desired value"
   [population]
-  (> (count (filter #(== (:fitness @%1) 0) population)) 0))
+  (not (empty? (filter #(== (:fitness @%1) 0) population))))
 
 (defn- mate 
   "cross-breeds existing members to produce offspring
@@ -50,7 +50,7 @@
                         [(:value @(first m1)) (:value @(first m2))]
                         [(:value @(first m2)) (:value @(first m1))])
                val (concat (take (/ (count (first values)) 2) (first values)) 
-                     (drop (/ (count (second values)) 2) (second values)))]
+                           (drop (/ (count (second values)) 2) (second values)))]
            (recur (conj! new-members (atom (struct member nil val)))
                   (rest m1) (rest m2)))))))
                     
