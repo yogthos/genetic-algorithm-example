@@ -7,46 +7,43 @@
 
 (defn- mutate 
   "randomly mutates values in members of the population using the mutator function"
-  [population mutator threshold]
+  [population mutator threshold fitness target]
   (for [member population]
-    (update-in member [:value] #(if (< (rand) threshold) (map mutator %) %))))
+    (if (< (rand) threshold)
+      (let [value (map mutator (:value member))]
+        {:value value
+         :fitness (fitness value target)})
+      member)))
 
-(defn- rank [population fitness target]   
-  (->>
-    (for [member population]    
-      (assoc-in member [:fitness] (fitness target (:value member)) ))
-    (sort-by :fitness)    
-    reverse))
+(defn- rank [population]
+  (reverse (sort-by :fitness population)))
 
-(defn- fit? [population]
-  (not-empty (filter #(= (:fitness %) 0) population)))
+(defn- update-vals [fitness target {v1 :value} {v2 :value}]  
+  (let [value (map #(if (> (rand) 0.5) %1 %2) v1 v2)]
+    {:value value :fitness (fitness value target)}))
 
-(defn- update-vals [{v1 :value} {v2 :value}]
-  (let [[f1 f2] (if (> (rand) 0.5) [take drop] [drop take])
-        [v1 v2] (if (> (rand) 0.5) [v1 v2] [v2 v1])]
-    {:fitness nil
-     :value (concat (f1 (/ (count v1) 2) v1) 
-                    (f2 (/ (count v2) 2) v2))}))
+(defn- mate [population fitness target]
+  (apply map 
+         (partial update-vals fitness target) 
+         (split-at (/ (count population) 2) population)))
 
-(defn- mate [members]
-  (apply map update-vals (split-at (/ (count members) 2) members)))
-
-(defn- evolve-step [population mutator threshold fitness target]
-  (let [mutated (rank (mutate population mutator threshold) fitness target)
-        size    (count mutated)
+(defn- evolve-step [size population mutator threshold fitness target]
+  (let [mutated (rank (mutate population mutator threshold fitness target))        
         promote-size (/ size 5)
         keep-size (- (/ size 2) promote-size)
         [xs ys] (split-at keep-size mutated)]
-    (concat xs (take promote-size ys) (mate mutated))))
+    (concat xs (take promote-size ys) (mate mutated fitness target))))
 
-(defn- gen-member [mutator target]
-  {:fitness nil :value (take (count target) (repeatedly #(mutator nil)))})
+(defn- gen-member [mutator fitness target]
+  (let [value (take (count target) (repeatedly #(mutator nil)))] 
+    {:value value :fitness (fitness value target)}))
 
-(defn- init-population [size mutator target]
-  (take size (repeatedly #(gen-member mutator target))))
+(defn- init-population [size mutator fitness target]
+  (rank (take size (repeatedly #(gen-member mutator fitness target)))))
 
-(defn evolve [size threshold target mutator fitness]
-  (loop [population (rank (init-population size mutator target) fitness target)]
-    (if (fit? population) 
+(defn evolve [size threshold mutator fitness target]
+  (loop [population (init-population size mutator fitness target)]
+    (println (first population))
+    (if (zero? (:fitness (first population))) 
       population 
-      (recur (evolve-step population mutator threshold fitness target)))))
+      (recur (evolve-step size population mutator threshold fitness target)))))
