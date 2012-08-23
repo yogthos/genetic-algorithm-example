@@ -1,4 +1,12 @@
-(defn mutator [_] (char (rand-in-range 32 126)))
+(defn mutator [c] 
+  (if c
+    (let [new-val ((if (> (rand) 0.5) + -)
+                    (rand-int 5) (int c))]
+      (char (cond 
+              (> new-val 126) 126
+              (< new-val 32) 32
+              :else new-val)))
+    (char (rand-in-range 32 126))))
 
 (defn fitness [value target]
   (reduce 
