@@ -1,4 +1,4 @@
-(ns ga)
+(ns ga.main)
 
 (defn rand-in-range
   "generates a random value within the given range"
