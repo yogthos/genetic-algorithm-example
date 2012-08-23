@@ -9,9 +9,7 @@
         fitness (fn [target value]
                   (reduce 
                     (fn [rank [a b]] (if (= a b) rank (dec rank)))
-                    0 (map vector value target)))]
-    
-    (first (evolve 1000 0.01 target mutator fitness))   
+                    0 (map vector value target)))]  
     (time (println (apply str (:value (first (evolve 500 0.01 target mutator fitness))))))))
 
 (-main "Hello World!")
