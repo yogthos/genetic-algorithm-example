@@ -1,3 +1,6 @@
+(ns test
+  (:use clojure.test))
+
 (defn mutator [c] 
   (if c
     (let [new-val ((if (> (rand) 0.5) + -)
@@ -13,8 +16,11 @@
     (fn [rank [a b]] (if (= a b) rank (dec rank)))
     0 (map vector value target)))
 
-(defn -main [string]
-  (let [target  (vec string)]    
-    (time (println (apply str (:value (first (evolve 1000 0.01 mutator fitness target))))))))
-
-(-main "Hello World!")
+(deftest evolve-string
+  (is 
+    (= "Hello World!"
+     (->> (evolve 1000 0.01 mutator fitness "Hello World!")
+       time
+       first
+       :value
+       (apply str)))))
