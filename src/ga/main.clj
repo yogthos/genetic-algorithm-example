@@ -21,17 +21,18 @@
   (reverse (sort-by :fitness population)))
 
 (defn- update-vals
-  "randomly selects a value from either the first or the second memeber for each position"
+  "randomly selects a value from either the first or the second memeber for each position, 
+  preferring the first member, as the front of the population is more fit"
   [fitness target {v1 :value} {v2 :value}]  
-  (let [value (map #(if (> (rand) 0.5) %1 %2) v1 v2)]
+  (let [value (map #(if (> (rand) 0.3) %1 %2) v1 v2)]
     {:value value :fitness (fitness value target)}))
 
 (defn- mate
-  "splits the population in half and randomly mates all the members"
+  "splits the population in half and mates all the members"
   [population fitness target]
   (apply map 
          (partial update-vals fitness target) 
-         (split-at (/ (count population) 2) (shuffle population))))
+         (split-at (/ (count population) 2) population)))
 
 (defn- evolve-step
   "mutate the population, then promote top members and add mated members to the end"
