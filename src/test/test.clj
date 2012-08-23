@@ -1,15 +1,12 @@
-(ns test.test
-   (:require (ga [main :as ga])) 
-  (:gen-class )) 
-  
-;example usage
+(defn mutator [_] (char (rand-in-range 32 126)))
+
+(defn fitness [value target]
+  (reduce 
+    (fn [rank [a b]] (if (= a b) rank (dec rank)))
+    0 (map vector value target)))
+
 (defn -main [string]
-  (let [target  (vec string)
-        mutator (fn[_] (char (rand-in-range 32 126))) 
-        fitness (fn [target value]
-                  (reduce 
-                    (fn [rank [a b]] (if (= a b) rank (dec rank)))
-                    0 (map vector value target)))]  
-    (time (println (apply str (:value (first (evolve 500 0.01 target mutator fitness))))))))
+  (let [target  (vec string)]    
+    (time (println (apply str (:value (first (evolve 1000 0.01 mutator fitness target))))))))
 
 (-main "Hello World!")
