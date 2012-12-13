@@ -57,8 +57,7 @@
 (defn evolve
   "evolves the population until at least one member is fit"
   [size threshold mutator fitness target]
-  (loop [population (init-population size mutator fitness target)]
-    (println (first population))
+  (loop [population (init-population size mutator fitness target)]    
     (if (zero? (:fitness (first population))) 
       population 
       (recur (evolve-step size population mutator threshold fitness target)))))
