@@ -1,5 +1,5 @@
-(ns test
-  (:use clojure.test))
+(ns ga.test.ga-test
+  (:use clojure.test ga.core))
 
 (defn mutator [c] 
   (if c
